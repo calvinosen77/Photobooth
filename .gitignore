@@ -1,0 +1,6 @@
+/log/*
+/tmp/*
+config/database.yml
+.idea
+.env
+.bundle

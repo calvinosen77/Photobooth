@@ -1,0 +1,155 @@
+
+.photo-booth
+  .form-group.user-info
+    h3 User
+    p Name: #{@user.name if @user.name}
+    p Email: #{@user.email if @user.email}
+
+    = label_tag :photo_booth
+    '
+    = link_to 'Photo Booth', '#', class: 'btn btn-primary', id: 'photo-booth'
+
+  .col-sm-offset1.col-sm-10.upload-photos
+    .row
+      .col-sm-6
+        p
+          | We stitch together three photos to create your animated profile photo. The best way to do this is by using the
+          '
+          | Photo Booth. If you prefer, you can
+          '
+          = link_to 'upload three photos', '#', id: 'manual-photo-booth'
+          | .
+      .col-sm-6
+        .photo-booth-avatar
+          canvas width="250" height="250" style="background-color: lightgray;"
+    .row.upload-panel id="upload-panel" style="display: none;"
+      input type="file" id="file-input" class="hidden"
+      ul id="upload-photos" class="clearfix"
+        - 3.times do
+          li
+            .upload-container data-added="false"
+              canvas width="250" height="250"
+              = link_to '+ Add Photo', '#', class: 'add-photo'
+              = link_to '#', class: 'remove-photo', style: "display: none;" do
+                span.glyphicon.glyphicon-remove
+      .clearfix
+      = link_to '#', class: 'btn btn-success', id: 'preview-uploaded-animation', style: 'display: none;' do
+        span.glyphicon.glyphicon-eye-open
+        '
+        | Preview Animation
+
+  .modal.fade.photo-booth-modal.allow-screen role="dialog" tabindex="-1" arialabelledby="allowCamera" aria-hidden="true" id="allow-camera"
+    .modal-dialog
+      .modal-content
+        h3.allow-message ^ Please allow access from the menu above ^
+        div#flash-fallback
+
+  .row.select-filter style="display: none;"
+    .col-sm-offset-2.col-sm-8
+      .row
+        - ['amaro', 'earlybird', 'lofi', 'mayfair', 'rise', 'sierra', 'valencia', 'willow', 'xpro'].each do |filter_name|
+          .col-sm-4.text-center.filter-item
+            = link_to '#', class: 'filter', id: filter_name do
+              canvas width=150 height=150
+              br
+              span= filter_name
+  .row.snap-photo style="display: none;"
+    .col-sm-12
+      .row
+        .col-sm-4.tips
+          .tips-content
+            h4.tips-title Tips:
+            .tip.tip1 style="display: none;"
+              b 1. Lighting matters
+              p
+                | Keep sun or light source in front of you, a bit above eye level. If it's off to the side, too high, or
+                '
+                | behind you, your features will appear shadowy. Try near the window or outside.
+            .tip.tip2 style="display: none;"
+              b 2. Set the scene
+              p
+                | Make sure there is nothing distracting in the background. Something interesting or personal is fine,
+                '
+                | e.g. a stack of books if you're a reader, but please, no other people or pets. Your profile photo should
+                '
+                | feature only YOU.
+            .tip.tip3 style="display: none;"
+              b 3. Strike a pose
+              p
+                | You can't go wrong with smiling! But with three photos, you can do more. Laugh, wave, roll your eyes, make
+                '
+                | your hat spin from frame to frame. Be creative. Let your personality shine!
+          .tip-navigator.text-center
+            .pull-left
+              = link_to '<<', '#', class: 'prev-tip btn btn-primary'
+            '
+            .pull-left
+              = link_to '>>', '#', class: 'next-tip btn btn-primary'
+            '
+            .pull-left.current-tip-wrapper
+              span.current-tip
+            .clearfix
+        .col-sm-4.video
+          .camera.text-center
+            canvas id="filtered-video" width="250" height="250"
+            #photo-video style="width: 250px; height: 250px; display: none;"
+            .wait-numbers
+          .row.filter-selector
+            .col-sm-2
+              = link_to '<', '#', class: 'btn btn-default prev-filter'
+            .col-sm-8
+              = link_to '', 'javascript:void(0)', class: 'btn btn-default', id: 'selected-filter'
+            .col-sm-2
+              = link_to '>', '#', class: 'btn btn-default next-filter'
+        .col-sm-4.take-photo
+          = link_to '#', class: 'btn-snap btn btn-success' do
+            span.glyphicon.glyphicon-camera
+            '
+            | Take Photo
+          = link_to '#', class: 'btn-snap-stop btn btn-danger', style: "display: none;" do
+            span.glyphicon.glyphicon-camera
+            '
+            | Stop
+          .snap-options style="display: none;"
+            .radio
+              label
+                input type="radio" name="snap-type" class="snap-type-checkbox" value=false
+                  | Retake Selected
+            .radio
+              label
+                input type="radio" name="snap-type" class="snap-type-checkbox" value=true Start Over
+    .col-sm-offset-1.col-sm-10.photos
+      .row
+        .col-sm-12
+          .frame.frame1.border.pull-left
+            canvas width=250 height=250
+          .frame.frame2.border.pull-left
+            canvas width=250 height=250
+          .frame.frame3.border.pull-left
+            canvas width=250 height=250
+          .clearfix
+          = link_to '#', class: 'btn btn-success', id: 'preview-animation', style: "display: none;" do
+            span.glyphicon.glyphicon-eye-open
+            '
+            | Preview Animation
+
+  .preview-modal.modal.fade.photo-booth-modal role="dialog" tabindex="-1" arialabelledby="previewAnimation" aria-hidden="true"
+    .modal-dialog
+      .modal-content.text-center
+        canvas id="preview-canvas" width=250 height=250
+        br
+        = link_to 'It\'s a keeper!', '#', class: 'btn btn-success', id: 'accept-photos'
+        = link_to 'Ugh!', '#', class: 'btn btn-danger', id: 'decline-photos'
+
+  .filters-modal.modal.fade.photo-booth-modal role="dialog" tabindex="-1" arialabelledby="filtersModal" aria-hidden="true"
+    .modal-dialog
+      .modal-content.text-center
+        .row
+          - ['amaro', 'earlybird', 'lofi', 'mayfair', 'rise', 'sierra', 'valencia', 'willow', 'xpro'].each do |filter_name|
+            .col-sm-4
+              canvas.preview-filter-canvas id="#{filter_name}-canvas" width=150 height=150 data-filter=(filter_name) style="width: 150px; height: 150px;"
+
+  .hidden.default-avatars
+    = image_tag 'default/1.jpg'
+    = image_tag 'default/2.jpg'
+    = image_tag 'default/3.jpg'
